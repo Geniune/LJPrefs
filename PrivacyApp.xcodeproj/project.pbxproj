@@ -37,6 +37,8 @@
 		18AFA6D5238D078A00573494 /* PrivacyApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrivacyApp.entitlements; sourceTree = "<group>"; };
 		18AFA6D6238D078A00573494 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		18AFA6D8238D079F00573494 /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
+		18FECF62238E029100E1D698 /* SystemMarco.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemMarco.h; sourceTree = "<group>"; };
+		18FECF63238E02D700E1D698 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,8 @@
 				187A2721238BCA5F00B28BC0 /* LSAuthorizationManager.m */,
 				18AFA6D2238CCCF500573494 /* AuthorizationViewController.h */,
 				18AFA6D3238CCCF500573494 /* AuthorizationViewController.m */,
+				18FECF62238E029100E1D698 /* SystemMarco.h */,
+				18FECF63238E02D700E1D698 /* PrefixHeader.pch */,
 				187A2713238BCA3300B28BC0 /* Assets.xcassets */,
 				187A2715238BCA3300B28BC0 /* LaunchScreen.storyboard */,
 				187A2718238BCA3300B28BC0 /* Info.plist */,
@@ -308,6 +312,8 @@
 				CODE_SIGN_ENTITLEMENTS = PrivacyApp/PrivacyApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9U87XF4F8A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PrivacyApp/PrefixHeader.pch";
 				INFOPLIST_FILE = PrivacyApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -327,6 +333,8 @@
 				CODE_SIGN_ENTITLEMENTS = PrivacyApp/PrivacyApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9U87XF4F8A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PrivacyApp/PrefixHeader.pch";
 				INFOPLIST_FILE = PrivacyApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (

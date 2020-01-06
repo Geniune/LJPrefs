@@ -70,24 +70,24 @@ return _sharedObject; \
         switch (status) {
             case SKCloudServiceAuthorizationStatusNotDetermined://用户尚未作出选择
             {
-                NSLog(@"用户还未作出选择，主动弹框询问");
+                DebugLog(@"用户还未作出选择，主动弹框询问");
                 [SKCloudServiceController requestAuthorization:^(SKCloudServiceAuthorizationStatus status) {
                     
                     switch (status) {
 
                         case SKCloudServiceAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
                         {
-                            NSLog(@"无权更改此应用程序状态");
+                            DebugLog(@"无权更改此应用程序状态");
                         }
                             break;
                         case SKCloudServiceAuthorizationStatusDenied://用户明确拒绝日历权限
                         {
-                            NSLog(@"用户点击不允许");
+                            DebugLog(@"用户点击不允许");
                         }
                         break;
                         case SKCloudServiceAuthorizationStatusAuthorized://已获得权限
                         {
-                            NSLog(@"用户点击允许");
+                            DebugLog(@"用户点击允许");
                         }
                         break;
                             
@@ -99,23 +99,23 @@ return _sharedObject; \
                 break;
             case SKCloudServiceAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
             {
-                NSLog(@"无权更改此应用程序状态");
+                DebugLog(@"无权更改此应用程序状态");
             }
                 break;
             case SKCloudServiceAuthorizationStatusDenied://用户明确拒绝日历权限
             {
-                NSLog(@"用户明确拒绝Apple Music权限");
+                DebugLog(@"用户明确拒绝Apple Music权限");
             }
             break;
             case SKCloudServiceAuthorizationStatusAuthorized://已获得权限
             {
-                NSLog(@"已获得Apple Music权限");
+                DebugLog(@"已获得Apple Music权限");
             }
             break;
         }
     }else{
         
-        NSLog(@"Apple Music 需要iOS 9.3以上版本");
+        DebugLog(@"Apple Music 需要iOS 9.3以上版本");
     }
 }
 
@@ -127,20 +127,20 @@ return _sharedObject; \
     switch (status) {
         case EKAuthorizationStatusNotDetermined://用户尚未作出选择
         {
-            NSLog(@"用户还未作出选择，主动弹框询问");
+            DebugLog(@"用户还未作出选择，主动弹框询问");
             EKEventStore *store = [[EKEventStore alloc] init];
             [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError * _Nullable error) {
                 
                 if(error){
-                    NSLog(@"error:%@",error);
+                    DebugLog(@"error:%@",error);
                 }else{
                     
                     if(granted){
                         //用户点击了“允许”
-                        NSLog(@"用户点击允许");
+                        DebugLog(@"用户点击允许");
                     }else{
                         //用户点击了“不允许”
-                        NSLog(@"用户点击不允许");
+                        DebugLog(@"用户点击不允许");
                     }
                 }
             }];
@@ -148,18 +148,18 @@ return _sharedObject; \
             break;
         case EKAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
         {
-            NSLog(@"无权更改此应用程序状态");
+            DebugLog(@"无权更改此应用程序状态");
         }
             break;
         case EKAuthorizationStatusDenied://用户明确拒绝日历权限
         {
-            NSLog(@"用户明确拒绝日历权限");
+            DebugLog(@"用户明确拒绝日历权限");
             //可以向用户做一个友好的提示，引导其去“设置”中打开日历权限
         }
             break;
         case EKAuthorizationStatusAuthorized://已获得权限，可使用日历
         {
-            NSLog(@"已获得日历权限");
+            DebugLog(@"已获得日历权限");
         }
             break;
     }
@@ -216,23 +216,23 @@ return _sharedObject; \
     switch (state) {
         case CBManagerAuthorizationNotDetermined://用户尚未作出选择
             {
-                NSLog(@"用户尚未作出选择");
+                DebugLog(@"用户尚未作出选择");
             }
             break;
         case CBManagerAuthorizationRestricted://无权使用蓝牙，可能是因为家长控制等原因
            {
-               NSLog(@"无权更改此应用程序状态");
+               DebugLog(@"无权更改此应用程序状态");
            }
            break;
         case CBManagerAuthorizationDenied://用户明确拒绝授权蓝牙权限
         {
-            NSLog(@"用户明确拒绝蓝牙权限");
+            DebugLog(@"用户明确拒绝蓝牙权限");
             //可以向用户做一个友好的提示，引导其去“设置”中打开定位功能
         }
         break;
         case CBManagerAuthorizationAllowedAlways://蓝牙可用
         {
-            NSLog(@"已获得蓝牙权限");
+            DebugLog(@"已获得蓝牙权限");
         }
         break;
     }
@@ -267,33 +267,33 @@ return _sharedObject; \
     switch (state) {
         case CBManagerStateUnknown://蓝牙状态未知
         {
-            NSLog(@"蓝牙状态未知");
+            DebugLog(@"蓝牙状态未知");
         }
             break;
         case CBManagerStateResetting://蓝牙状态未知
         {
-            NSLog(@"与系统连接的蓝牙丢失");
+            DebugLog(@"与系统连接的蓝牙丢失");
         }
             break;
         case CBManagerStateUnsupported://设备不支持蓝牙
         {
-            NSLog(@"当前设备不支持蓝牙");
+            DebugLog(@"当前设备不支持蓝牙");
         }
             break;
         case CBManagerStateUnauthorized://用户明确拒绝授权蓝牙权限
         {
-            NSLog(@"用户明确拒绝蓝牙权限");
+            DebugLog(@"用户明确拒绝蓝牙权限");
             //可以向用户做一个友好的提示，引导其去“设置”中打开蓝牙权限
         }
             break;
         case CBManagerStatePoweredOff://蓝牙当前处于“关闭”状态
         {
-            NSLog(@"蓝牙处于关闭状态");
+            DebugLog(@"蓝牙处于关闭状态");
         }
             break;
         case CBManagerStatePoweredOn://蓝牙当前处于“打开”状态且可供使用
         {
-            NSLog(@"蓝牙处于打开状态，且已获得蓝牙权限");
+            DebugLog(@"蓝牙处于打开状态，且已获得蓝牙权限");
         }
             break;
     }
@@ -318,45 +318,42 @@ return _sharedObject; \
         switch (status) {
             case AVAuthorizationStatusNotDetermined://用户尚未作出选择
             {
-                NSLog(@"用户还未作出选择，主动弹框询问");
+                DebugLog(@"用户还未作出选择，主动弹框询问");
                 [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
 
                     if(granted){
                         //用户点击“允许”
-                        NSLog(@"用户点击允许");
+                        DebugLog(@"用户点击允许");
                     }else{
                         //用户点击“不允许”
-                        NSLog(@"用户点击不允许");
+                        DebugLog(@"用户点击不允许");
                     }
                 }];
             }
                 break;
             case AVAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
             {
-                NSLog(@"无权更改此应用程序状态");
+                DebugLog(@"无权更改此应用程序状态");
             }
                 break;
             case AVAuthorizationStatusDenied://用户明确拒绝相机权限
             {
-                NSLog(@"用户明确拒绝相机权限");
+                DebugLog(@"用户明确拒绝相机权限");
                 //这里可以向用户做一个友好的提示，引导其去“设置”中打开日历权限
             }
                 break;
             case AVAuthorizationStatusAuthorized:
             {
                 //已授权，可以直接调用UIImagePickerController进行拍照、视频录像
-                NSLog(@"已获取相机权限");
+                DebugLog(@"已获取相机权限");
             }
                 break;
         }
     }else{
         
-        NSLog(@"当前设备不支持打开相机，请检查是否使用真机测试");
+        DebugLog(@"当前设备不支持打开相机，请检查是否使用真机测试");
     }
 }
-
-
-
 
 #pragma mark - Photos 相册
 - (void)checkPhotosAuthorization{
@@ -372,26 +369,26 @@ return _sharedObject; \
             switch (status) {
                 case PHAuthorizationStatusNotDetermined://用户尚未作出选择
                 {
-                    NSLog(@"用户还未作出选择，主动弹框询问");
+                    DebugLog(@"用户还未作出选择，主动弹框询问");
                     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
                         
                         switch (status) {
                             case PHAuthorizationStatusRestricted:
                             {
                                 //无权更改此应用程序状态，可能是因为家长控制等原因
-                                NSLog(@"无权更改此应用程序状态");
+                                DebugLog(@"无权更改此应用程序状态");
                             }
                                 break;
                             case PHAuthorizationStatusDenied:
                             {
                                 //用户点击“不允许”
-                                NSLog(@"用户点击不允许");
+                                DebugLog(@"用户点击不允许");
                             }
                                 break;
                             case PHAuthorizationStatusAuthorized:
                             {
                                 //用户点击“允许”
-                                NSLog(@"用户点击允许");
+                                DebugLog(@"用户点击允许");
                             }
                                 break;
                             
@@ -403,19 +400,19 @@ return _sharedObject; \
                     break;
                 case PHAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
                 {
-                    NSLog(@"无权更改此应用程序状态");
+                    DebugLog(@"无权更改此应用程序状态");
                 }
                     break;
                 case PHAuthorizationStatusDenied://用户明确拒绝相机权限
                 {
-                    NSLog(@"用户明确拒绝相册权限");
+                    DebugLog(@"用户明确拒绝相册权限");
                     //这里可以向用户做一个友好的提示，引导其去“设置”中打开日历权限
                 }
                     break;
                 case PHAuthorizationStatusAuthorized:
                 {
                     //已授权，可以直接调用UIImagePickerController进行拍照、视频录像
-                    NSLog(@"已获取相册权限");
+                    DebugLog(@"已获取相册权限");
                 }
                     break;
             }
@@ -426,38 +423,38 @@ return _sharedObject; \
             switch (status) {
                 case ALAuthorizationStatusNotDetermined://用户尚未作出选择
                 {
-                    NSLog(@"用户还未作出选择，主动弹框询问");
+                    DebugLog(@"用户还未作出选择，主动弹框询问");
                     ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
                    [assetLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
                        //用户点击“允许”
-                       NSLog(@"用户点击允许");
+                       DebugLog(@"用户点击允许");
                    } failureBlock:^(NSError *error) {
                        //用户点击“不允许”
-                       NSLog(@"用户点击不允许");
+                       DebugLog(@"用户点击不允许");
                    }];
                 }
                     break;
                 case ALAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
                 {
-                    NSLog(@"无权更改此应用程序状态");
+                    DebugLog(@"无权更改此应用程序状态");
                 }
                     break;
                 case ALAuthorizationStatusDenied://用户明确拒绝相册权限
                 {
-                    NSLog(@"用户明确拒绝相册权限");
+                    DebugLog(@"用户明确拒绝相册权限");
                     //这里可以向用户做一个友好的提示，引导其去“设置”中打开相册权限
                 }
                     break;
                 case ALAuthorizationStatusAuthorized:
                 {
                     //已授权
-                    NSLog(@"已获取相册权限");
+                    DebugLog(@"已获取相册权限");
                 }
                     break;
             }
         }
     }else{
-        NSLog(@"当前设备不支持打开相册");
+        DebugLog(@"当前设备不支持打开相册");
     }
 }
 
@@ -467,14 +464,14 @@ return _sharedObject; \
     //查询当前设备是否已打开定位服务
     if(![CLLocationManager locationServicesEnabled]){
         //定位服务不可用
-        NSLog(@"定位服务不可用");
+        DebugLog(@"定位服务不可用");
     }else{
         
         //判断当前App定位权限状态
         CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
         
         if(status == kCLAuthorizationStatusNotDetermined){
-            NSLog(@"用户还未作出选择，主动弹框询问");
+            DebugLog(@"用户还未作出选择，主动弹框询问");
             //当前用户还未选择，可以让App主动弹询问用户是否允许
             if(!_locationManager){
                 _locationManager = [[CLLocationManager alloc] init];
@@ -509,23 +506,23 @@ return _sharedObject; \
             break;
         case kCLAuthorizationStatusRestricted://无权更改此应用程序状态
         {
-            NSLog(@"无权更改此应用程序状态");
+            DebugLog(@"无权更改此应用程序状态");
         }
             break;
         case kCLAuthorizationStatusDenied://用户明确拒绝定位权限
         {
-            NSLog(@"用户明确拒绝定位权限");
+            DebugLog(@"用户明确拒绝定位权限");
             //无权限，可以向用户做一个友好的提示，引导其去“设置”中打开定位功能
         }
             break;
         case kCLAuthorizationStatusAuthorizedWhenInUse://已授权定位服务（调用requestWhenInUseAuthorization）
         {
-            NSLog(@"已获取定位权限：WhenInUseAuthorization");
+            DebugLog(@"已获取定位权限：WhenInUseAuthorization");
         }
             break;
         case kCLAuthorizationStatusAuthorizedAlways://已授权定位服务（调用requestAlwaysAuthorization）
         {
-            NSLog(@"已获取定位权限：AlwaysAuthorization");
+            DebugLog(@"已获取定位权限：AlwaysAuthorization");
         }
             break;
 //            case kCLAuthorizationStatusAuthorized://已授权定位服务（iOS 7.0会走这个，iOS 8.0起这个枚举被废弃）
@@ -545,19 +542,19 @@ return _sharedObject; \
         switch (status) {
             case CNAuthorizationStatusNotDetermined://用户尚未作出选择
             {
-                NSLog(@"用户还未作出选择，主动弹框询问");
+                DebugLog(@"用户还未作出选择，主动弹框询问");
                 CNContactStore *contactStore = [[CNContactStore alloc] init];
                 [contactStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
                    
                     if(error){
-                        NSLog(@"error:%@",error);
+                        DebugLog(@"error:%@",error);
                     }else{
                         if(granted){
                             //用户点击了“允许”
-                            NSLog(@"用户点击允许");
+                            DebugLog(@"用户点击允许");
                         }else{
                             //用户点击了“不允许”
-                            NSLog(@"用户点击不允许");
+                            DebugLog(@"用户点击不允许");
                         }
                     }
                 }];
@@ -566,18 +563,18 @@ return _sharedObject; \
                 break;
             case CNAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
             {
-                NSLog(@"无权更改此应用程序状态");
+                DebugLog(@"无权更改此应用程序状态");
             }
                 break;
             case CNAuthorizationStatusDenied://用户明确拒绝访问联系人权限
             {
-                NSLog(@"用户明确拒绝联系人权限");
+                DebugLog(@"用户明确拒绝联系人权限");
                 //可以向用户做一个友好的提示，引导其去“设置”中打开联系人权限
             }
                 break;
             case CNAuthorizationStatusAuthorized://已获得权限，可访问联系人数据
             {
-                NSLog(@"已获取联系人权限");
+                DebugLog(@"已获取联系人权限");
             }
                 break;
         }
@@ -588,16 +585,16 @@ return _sharedObject; \
         
         if(status == kABAuthorizationStatusNotDetermined){//用户尚未作出选择
             
-            NSLog(@"用户还未作出选择，主动弹框询问");
+            DebugLog(@"用户还未作出选择，主动弹框询问");
             __block ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, NULL);//注意ABAddressBookRef不是Objective-C对象，需要自行管理内存
             ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
                 
                 if (granted) {
                     //用户点击了“允许”
-                    NSLog(@"用户点击允许");
+                    DebugLog(@"用户点击允许");
                 }else{
                     //用户点击了“不允许”
-                    NSLog(@"用户点击不允许");
+                    DebugLog(@"用户点击不允许");
                 }
                 if (addressBookRef) {
                     CFRelease(addressBookRef);
@@ -605,11 +602,11 @@ return _sharedObject; \
                 }
             });
         }else if(status == kABAuthorizationStatusRestricted){//无权更改此应用程序状态，可能是因为家长控制等原因
-            NSLog(@"无权更改此应用程序状态");
+            DebugLog(@"无权更改此应用程序状态");
         }else if(status == kABAuthorizationStatusDenied){//用户明确拒绝联系人权限
-            NSLog(@"用户明确拒绝联系人权限");
+            DebugLog(@"用户明确拒绝联系人权限");
         }else{//已获得权限，可访问联系人数据
-            NSLog(@"已获取联系人权限");
+            DebugLog(@"已获取联系人权限");
         }
         
     }
@@ -634,19 +631,19 @@ return _sharedObject; \
             switch (status) {
                 case HKAuthorizationStatusNotDetermined://用户尚未作出选择
                 {
-                    NSLog(@"用户还未作出选择，主动弹框询问");
+                    DebugLog(@"用户还未作出选择，主动弹框询问");
                     NSSet *typeSet = [NSSet setWithObject:stepCountType];
                     [self.healthStore requestAuthorizationToShareTypes:typeSet readTypes:typeSet completion:^(BOOL success, NSError * _Nullable error) {
                         
                         if(error){
-                            NSLog(@"error:%@", error);
+                            DebugLog(@"error:%@", error);
                         }else{
                             if(success){
                                 //用户点击了“允许”
-                                NSLog(@"用户点击允许");
+                                DebugLog(@"用户点击允许");
                             }else{
                                 //用户点击了“不允许”
-                                NSLog(@"用户点击不允许");
+                                DebugLog(@"用户点击不允许");
                             }
                         }
                     }];
@@ -654,21 +651,21 @@ return _sharedObject; \
                     break;
                 case HKAuthorizationStatusSharingDenied://用户明确拒绝健康权限
                 {
-                    NSLog(@"用户明确拒绝健康权限");
+                    DebugLog(@"用户明确拒绝健康权限");
                 }
                     break;
                 case HKAuthorizationStatusSharingAuthorized://已获得健康权限
                 {
-                    NSLog(@"已获取健康权限");
+                    DebugLog(@"已获取健康权限");
                 }
                     break;
             }
         }else{
-            NSLog(@"当前设备不支持Health Kit");
+            DebugLog(@"当前设备不支持Health Kit");
         }
     }else{
         
-        NSLog(@"需要iOS 8.0以上版本才支持Health Kit");
+        DebugLog(@"需要iOS 8.0以上版本才支持Health Kit");
     }
 }
 
@@ -683,7 +680,7 @@ return _sharedObject; \
         }
     }else{
         
-        NSLog(@"需要iOS 8.0以上版本才支持Health Kit");
+        DebugLog(@"需要iOS 8.0以上版本才支持Health Kit");
     }
 }
 
@@ -691,21 +688,21 @@ return _sharedObject; \
 - (void)homeManagerDidUpdateHomes:(HMHomeManager *)manager{
     
     if(manager.homes.count > 0){
-        NSLog(@"当前已有HMHome对象存在");
-        NSLog(@"已获取Home Kit权限");
+        DebugLog(@"当前已有HMHome对象存在");
+        DebugLog(@"已获取Home Kit权限");
     }else{
-        NSLog(@"当前暂无HMHome对象");
+        DebugLog(@"当前暂无HMHome对象");
         __weak HMHomeManager *weakHomeManager = manager;
         [manager addHomeWithName:@"我的家" completionHandler:^(HMHome * _Nullable home, NSError * _Nullable error) {
             
             if(error){
                 if(error.code == HMErrorCodeHomeAccessNotAuthorized){
-                    NSLog(@"用户明确拒绝Home Kit权限");
+                    DebugLog(@"用户明确拒绝Home Kit权限");
                 }else{
-                    NSLog(@"error:%@", error);
+                    DebugLog(@"error:%@", error);
                 }
             }else{
-                NSLog(@"已获取Home Kit权限");
+                DebugLog(@"已获取Home Kit权限");
             }
             
             if (home) {
@@ -726,32 +723,32 @@ return _sharedObject; \
         switch (status) {
             case AVAuthorizationStatusNotDetermined://用户尚未作出选择
             {
-                NSLog(@"用户还未作出选择，主动弹框询问");
+                DebugLog(@"用户还未作出选择，主动弹框询问");
                 [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
                     if (granted) {
                         //用户点击了“允许”
-                        NSLog(@"用户点击允许");
+                        DebugLog(@"用户点击允许");
                     }else{
                         //用户点击了“不允许”
-                        NSLog(@"用户点击不允许");
+                        DebugLog(@"用户点击不允许");
                     }
                 }];
             }
                 break;
             case AVAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
             {
-                NSLog(@"无权更改此应用程序状态");
+                DebugLog(@"无权更改此应用程序状态");
             }
                 break;
             case AVAuthorizationStatusDenied://用户明确拒绝麦克风权限
             {
-                NSLog(@"用户明确拒绝麦克风权限");
+                DebugLog(@"用户明确拒绝麦克风权限");
                 //可以向用户做一个友好的提示，引导其去“设置”中打开麦克风权限
             }
                 break;
             case AVAuthorizationStatusAuthorized://已获得权限，可使用麦克风
             {
-                NSLog(@"已获取麦克风权限");
+                DebugLog(@"已获取麦克风权限");
             }
                 break;
         }
@@ -770,26 +767,26 @@ return _sharedObject; \
         
         [_motionActivityManager startActivityUpdatesToQueue:[[NSOperationQueue alloc] init] withHandler:^(CMMotionActivity * _Nullable activity) {
            
-             NSLog(@"当前状态：");
+             DebugLog(@"当前状态：");
             if(activity.unknown){
-                NSLog(@"状态未知");
+                DebugLog(@"状态未知");
             }else if(activity.walking){
-                NSLog(@"步行");
+                DebugLog(@"步行");
             }else if(activity.running){
-                NSLog(@"跑步");
+                DebugLog(@"跑步");
             }else if(activity.automotive){
-                NSLog(@"驾车");
+                DebugLog(@"驾车");
             }else if(activity.stationary){
-                NSLog(@"静止");
+                DebugLog(@"静止");
             }
             
-            NSLog(@"准确度：");
+            DebugLog(@"准确度：");
             if(activity.confidence == CMMotionActivityConfidenceLow){
-                NSLog(@"低");
+                DebugLog(@"低");
              }else if(activity.confidence == CMMotionActivityConfidenceMedium){
-                 NSLog(@"中");
+                 DebugLog(@"中");
              }else if(activity.confidence == CMMotionActivityConfidenceHigh){
-                 NSLog(@"高");
+                 DebugLog(@"高");
              }
             
             [_motionActivityManager stopActivityUpdates];
@@ -797,7 +794,7 @@ return _sharedObject; \
 
     }else{
         
-        NSLog(@"当前设备或系统版本不支持Motion");
+        DebugLog(@"当前设备或系统版本不支持Motion");
     }
 }
 
@@ -813,14 +810,14 @@ return _sharedObject; \
             [store requestAccessToEntityType:EKEntityTypeReminder completion:^(BOOL granted, NSError * _Nullable error) {
                 
                 if(error){
-                    NSLog(@"error:%@", error);
+                    DebugLog(@"error:%@", error);
                 }else{
                     if (granted) {
                         //用户点击了“允许”
-                        NSLog(@"用户点击允许");
+                        DebugLog(@"用户点击允许");
                     }else{
                         //用户点击了“不允许”
-                        NSLog(@"用户点击不允许");
+                        DebugLog(@"用户点击不允许");
                     }
                 }
             }];
@@ -828,17 +825,17 @@ return _sharedObject; \
             break;
         case EKAuthorizationStatusRestricted:
         {
-            NSLog(@"无权更改此应用程序状态");
+            DebugLog(@"无权更改此应用程序状态");
         }
             break;
         case EKAuthorizationStatusDenied://用户明确拒绝提醒事项权限
         {
-            NSLog(@"用户明确拒绝提醒事项权限");
+            DebugLog(@"用户明确拒绝提醒事项权限");
         }
             break;
         case EKAuthorizationStatusAuthorized:
         {
-            NSLog(@"已获取提醒事项权限");
+            DebugLog(@"已获取提醒事项权限");
         }
             break;
         
