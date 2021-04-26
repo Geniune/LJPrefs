@@ -29,12 +29,12 @@
 @end
 
 @implementation AuthorizationViewController
-
+                                                                       
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"隐私权限";
-
+    
     titleArray = @[@"Apple Music", @"Bluetooth", @"Calendar", @"Camera", @"Contacts", @"Health", @"Home", @"Location", @"Microphone", @"Motion", @"Photos", @"Reminders", @"Siri（未实现）"];
     detailArray = @[@"音乐", @"蓝牙", @"日历", @"相机", @"联系人", @"健康", @"家庭", @"定位", @"麦克风", @"运动", @"相册", @"提醒事项", @"Siri"];
     
@@ -42,7 +42,9 @@
 }
 
 - (UITableView *)tableView{
-    if (_tableView == nil) {
+    
+    if (!_tableView) {
+        
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, APP_W, APP_H) style:UITableViewStyleGrouped];
         _tableView.delegate = self;
         _tableView.dataSource = self;
@@ -51,19 +53,26 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
     return titleArray.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     return 45;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     NSString *reuseIdentifier = NSStringFromClass([self class]);
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
+    
     if (cell == nil) {
+        
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     }
+    
     return cell;
 }
 
@@ -75,9 +84,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+
     switch (indexPath.row) {
-            
+
         case 0://音乐
         {
             [AUTHORIZATIONMANAGER checkAppleMusicAuthorization];
@@ -143,7 +152,7 @@
            [AUTHORIZATIONMANAGER checkSiriAuthorization];
         }
            break;
-            
+
         default:
             break;
     }

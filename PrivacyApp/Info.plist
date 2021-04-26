@@ -19,7 +19,9 @@
 	<key>NSHomeKitUsageDescription</key>
 	<string>获取Home权限</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>获取定位权限</string>
+	<string>获取使用期间定位权限</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>获取持续定位权限</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>获取定位权限</string>
 	<key>NSMicrophoneUsageDescription</key>

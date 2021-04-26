@@ -175,7 +175,6 @@ return _sharedObject; \
     
     if(!_bluetoothManager){
         
-        //
         _bluetoothManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     }
     
@@ -361,100 +360,48 @@ return _sharedObject; \
     //查询当前设备是否支持打开相册
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
         
-        //判断当前App相册权限状态，注意PHAuthorizationStatus枚举需iOS 8以上才可以使用，iOS 7需替换为ALAuthorizationStatus
-        if(@available(iOS 8, *)){
-            
-            PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
-
-            switch (status) {
-                case PHAuthorizationStatusNotDetermined://用户尚未作出选择
-                {
-                    DebugLog(@"用户还未作出选择，主动弹框询问");
-                    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-                        
-                        switch (status) {
-                            case PHAuthorizationStatusRestricted:
-                            {
-                                //无权更改此应用程序状态，可能是因为家长控制等原因
-                                DebugLog(@"无权更改此应用程序状态");
-                            }
-                                break;
-                            case PHAuthorizationStatusDenied:
-                            {
-                                //用户点击“不允许”
-                                DebugLog(@"用户点击不允许");
-                            }
-                                break;
-                            case PHAuthorizationStatusAuthorized:
-                            {
-                                //用户点击“允许”
-                                DebugLog(@"用户点击允许");
-                            }
-                                break;
-                            
-                            default:
-                                break;
-                        }
-                    }];
-                }
-                    break;
-                case PHAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
-                {
-                    DebugLog(@"无权更改此应用程序状态");
-                }
-                    break;
-                case PHAuthorizationStatusDenied://用户明确拒绝相机权限
-                {
-                    DebugLog(@"用户明确拒绝相册权限");
-                    //这里可以向用户做一个友好的提示，引导其去“设置”中打开日历权限
-                }
-                    break;
-                case PHAuthorizationStatusAuthorized:
-                {
-                    //已授权，可以直接调用UIImagePickerController进行拍照、视频录像
-                    DebugLog(@"已获取相册权限");
-                }
-                    break;
-            }
-        }else{
-            
-            ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-            
-            switch (status) {
-                case ALAuthorizationStatusNotDetermined://用户尚未作出选择
-                {
-                    DebugLog(@"用户还未作出选择，主动弹框询问");
-                    ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
-                   [assetLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                       //用户点击“允许”
-                       DebugLog(@"用户点击允许");
-                   } failureBlock:^(NSError *error) {
-                       //用户点击“不允许”
-                       DebugLog(@"用户点击不允许");
-                   }];
-                }
-                    break;
-                case ALAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
-                {
-                    DebugLog(@"无权更改此应用程序状态");
-                }
-                    break;
-                case ALAuthorizationStatusDenied://用户明确拒绝相册权限
-                {
-                    DebugLog(@"用户明确拒绝相册权限");
-                    //这里可以向用户做一个友好的提示，引导其去“设置”中打开相册权限
-                }
-                    break;
-                case ALAuthorizationStatusAuthorized:
-                {
-                    //已授权
-                    DebugLog(@"已获取相册权限");
-                }
-                    break;
-            }
-        }
+        PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];//注意PHAuthorizationStatus枚举需iOS 8以上才可以使用，iOS 7需替换为ALAuthorizationStatus
+        [self checkPhotoAuthorizationStatus:status];
     }else{
+        
         DebugLog(@"当前设备不支持打开相册");
+    }
+}
+
+- (void)checkPhotoAuthorizationStatus:(PHAuthorizationStatus)authorization{
+    
+    switch (authorization) {
+            
+        case PHAuthorizationStatusNotDetermined://用户尚未作出选择
+        {
+            DebugLog(@"用户还未作出选择，主动弹框询问");
+            [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+                
+                [self checkPhotoAuthorizationStatus:status];
+            }];
+        }
+            break;
+        case PHAuthorizationStatusRestricted:
+        {
+            DebugLog(@"无权更改此应用程序状态");
+        }
+            break;
+        case PHAuthorizationStatusDenied:
+        {
+            DebugLog(@"用户明确拒绝相册权限");
+        }
+            break;
+        case PHAuthorizationStatusAuthorized:
+        {
+            //已授权
+            DebugLog(@"已获取相册权限");
+        }
+            break;
+        case PHAuthorizationStatusLimited:
+        {
+            DebugLog(@"iOS 14新推出的的权限");
+        }
+            break;
     }
 }
 
@@ -471,12 +418,14 @@ return _sharedObject; \
         CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
         
         if(status == kCLAuthorizationStatusNotDetermined){
+            
             DebugLog(@"用户还未作出选择，主动弹框询问");
             //当前用户还未选择，可以让App主动弹询问用户是否允许
             if(!_locationManager){
                 _locationManager = [[CLLocationManager alloc] init];
-                _locationManager.delegate = self;//需要走delegate回调方法
+                _locationManager.delegate = self;
             }
+            
             //iOS 8.0+支持两种定位模式：
             //(1) [locationManager requestWhenInUseAuthorization]; App使用过程中定位
             //(2) [locationManager requestAlwaysAuthorization]; 持续定位，支持App进入后台后仍持续获取定位信息
@@ -499,57 +448,111 @@ return _sharedObject; \
 - (void)checkLocationManagerState:(CLAuthorizationStatus)status{
 
     switch (status) {
-        case kCLAuthorizationStatusNotDetermined://用户尚未作出选择
+        case kCLAuthorizationStatusNotDetermined:
         {
             
         }
             break;
-        case kCLAuthorizationStatusRestricted://无权更改此应用程序状态
+        case kCLAuthorizationStatusRestricted:
         {
             DebugLog(@"无权更改此应用程序状态");
         }
             break;
-        case kCLAuthorizationStatusDenied://用户明确拒绝定位权限
+        case kCLAuthorizationStatusDenied:
         {
             DebugLog(@"用户明确拒绝定位权限");
             //无权限，可以向用户做一个友好的提示，引导其去“设置”中打开定位功能
         }
             break;
-        case kCLAuthorizationStatusAuthorizedWhenInUse://已授权定位服务（调用requestWhenInUseAuthorization）
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
         {
             DebugLog(@"已获取定位权限：WhenInUseAuthorization");
+//            [_locationManager requestLocation];
         }
             break;
-        case kCLAuthorizationStatusAuthorizedAlways://已授权定位服务（调用requestAlwaysAuthorization）
+        case kCLAuthorizationStatusAuthorizedAlways:
         {
             DebugLog(@"已获取定位权限：AlwaysAuthorization");
         }
             break;
-//            case kCLAuthorizationStatusAuthorized://已授权定位服务（iOS 7.0会走这个，iOS 8.0起这个枚举被废弃）
-//            {
-//            }
-//                break;
+//        case kCLAuthorizationStatusAuthorized://已授权定位服务（iOS 8.0起这个枚举被废弃）
+//        {
+//        }
+//            break;
     }
 }
 
 #pragma mark - Contacts 联系人
 - (void)checkContactsAuthorization{
-
-    if(@available(iOS 9, *)){//iOS 9+ 使用CNContactStore
         
-        CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    
+    switch (status) {
+        case CNAuthorizationStatusNotDetermined://用户尚未作出选择
+        {
+            DebugLog(@"用户还未作出选择，主动弹框询问");
+            CNContactStore *contactStore = [[CNContactStore alloc] init];
+            [contactStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+               
+                if(error){
+                    DebugLog(@"error:%@",error);
+                }else{
+                    if(granted){
+                        //用户点击了“允许”
+                        DebugLog(@"用户点击允许");
+                    }else{
+                        //用户点击了“不允许”
+                        DebugLog(@"用户点击不允许");
+                    }
+                }
+            }];
+            
+        }
+            break;
+        case CNAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
+        {
+            DebugLog(@"无权更改此应用程序状态");
+        }
+            break;
+        case CNAuthorizationStatusDenied://用户明确拒绝访问联系人权限
+        {
+            DebugLog(@"用户明确拒绝联系人权限");
+            //可以向用户做一个友好的提示，引导其去“设置”中打开联系人权限
+        }
+            break;
+        case CNAuthorizationStatusAuthorized://已获得权限，可访问联系人数据
+        {
+            DebugLog(@"已获取联系人权限");
+        }
+            break;
+    }
+}
+
+#pragma mark - Health 健康
+- (void)checkHealthAuthorization{
+    
+    //注意：Health 需要iOS 8.0+
+    if([HKHealthStore isHealthDataAvailable]){
+        
+        if(!_healthStore){
+            _healthStore = [[HKHealthStore alloc] init];
+        }
+        
+        //例如获取步数
+        HKQuantityType *stepCountType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
+        HKAuthorizationStatus status = [self.healthStore authorizationStatusForType:stepCountType];
         
         switch (status) {
-            case CNAuthorizationStatusNotDetermined://用户尚未作出选择
+            case HKAuthorizationStatusNotDetermined://用户尚未作出选择
             {
                 DebugLog(@"用户还未作出选择，主动弹框询问");
-                CNContactStore *contactStore = [[CNContactStore alloc] init];
-                [contactStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                   
+                NSSet *typeSet = [NSSet setWithObject:stepCountType];
+                [self.healthStore requestAuthorizationToShareTypes:typeSet readTypes:typeSet completion:^(BOOL success, NSError * _Nullable error) {
+                    
                     if(error){
-                        DebugLog(@"error:%@",error);
+                        DebugLog(@"error:%@", error);
                     }else{
-                        if(granted){
+                        if(success){
                             //用户点击了“允许”
                             DebugLog(@"用户点击允许");
                         }else{
@@ -558,129 +561,29 @@ return _sharedObject; \
                         }
                     }
                 }];
-                
             }
                 break;
-            case CNAuthorizationStatusRestricted://无权更改此应用程序状态，可能是因为家长控制等原因
+            case HKAuthorizationStatusSharingDenied://用户明确拒绝健康权限
             {
-                DebugLog(@"无权更改此应用程序状态");
+                DebugLog(@"用户明确拒绝健康权限");
             }
                 break;
-            case CNAuthorizationStatusDenied://用户明确拒绝访问联系人权限
+            case HKAuthorizationStatusSharingAuthorized://已获得健康权限
             {
-                DebugLog(@"用户明确拒绝联系人权限");
-                //可以向用户做一个友好的提示，引导其去“设置”中打开联系人权限
-            }
-                break;
-            case CNAuthorizationStatusAuthorized://已获得权限，可访问联系人数据
-            {
-                DebugLog(@"已获取联系人权限");
+                DebugLog(@"已获取健康权限");
             }
                 break;
         }
-        
-    }else{//低于iOS 9的版本需要使用AddressBook
-        
-        ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
-        
-        if(status == kABAuthorizationStatusNotDetermined){//用户尚未作出选择
-            
-            DebugLog(@"用户还未作出选择，主动弹框询问");
-            __block ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, NULL);//注意ABAddressBookRef不是Objective-C对象，需要自行管理内存
-            ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
-                
-                if (granted) {
-                    //用户点击了“允许”
-                    DebugLog(@"用户点击允许");
-                }else{
-                    //用户点击了“不允许”
-                    DebugLog(@"用户点击不允许");
-                }
-                if (addressBookRef) {
-                    CFRelease(addressBookRef);
-                    addressBookRef = NULL;
-                }
-            });
-        }else if(status == kABAuthorizationStatusRestricted){//无权更改此应用程序状态，可能是因为家长控制等原因
-            DebugLog(@"无权更改此应用程序状态");
-        }else if(status == kABAuthorizationStatusDenied){//用户明确拒绝联系人权限
-            DebugLog(@"用户明确拒绝联系人权限");
-        }else{//已获得权限，可访问联系人数据
-            DebugLog(@"已获取联系人权限");
-        }
-        
-    }
-}
-
-#pragma mark - Health 健康
-- (void)checkHealthAuthorization{
-    
-    //注意：Health 需要iOS 8.0+
-    if(@available(iOS 8, *)){
-        
-        if ([HKHealthStore isHealthDataAvailable]) {
-            
-            if(!_healthStore){
-                _healthStore = [[HKHealthStore alloc] init];
-            }
-            
-            //例如获取步数
-            HKQuantityType *stepCountType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
-            HKAuthorizationStatus status = [self.healthStore authorizationStatusForType:stepCountType];
-            
-            switch (status) {
-                case HKAuthorizationStatusNotDetermined://用户尚未作出选择
-                {
-                    DebugLog(@"用户还未作出选择，主动弹框询问");
-                    NSSet *typeSet = [NSSet setWithObject:stepCountType];
-                    [self.healthStore requestAuthorizationToShareTypes:typeSet readTypes:typeSet completion:^(BOOL success, NSError * _Nullable error) {
-                        
-                        if(error){
-                            DebugLog(@"error:%@", error);
-                        }else{
-                            if(success){
-                                //用户点击了“允许”
-                                DebugLog(@"用户点击允许");
-                            }else{
-                                //用户点击了“不允许”
-                                DebugLog(@"用户点击不允许");
-                            }
-                        }
-                    }];
-                }
-                    break;
-                case HKAuthorizationStatusSharingDenied://用户明确拒绝健康权限
-                {
-                    DebugLog(@"用户明确拒绝健康权限");
-                }
-                    break;
-                case HKAuthorizationStatusSharingAuthorized://已获得健康权限
-                {
-                    DebugLog(@"已获取健康权限");
-                }
-                    break;
-            }
-        }else{
-            DebugLog(@"当前设备不支持Health Kit");
-        }
-    }else{
-        
-        DebugLog(@"需要iOS 8.0以上版本才支持Health Kit");
     }
 }
 
 #pragma mark - Home Kit
 - (void)checkHomeKitAuthorization{
     
-    if(@available(iOS 8, *)){
-        
-        if(!_homeManager){
-            _homeManager = [[HMHomeManager alloc] init];
-            _homeManager.delegate = self;
-        }
-    }else{
-        
-        DebugLog(@"需要iOS 8.0以上版本才支持Health Kit");
+    //注意：需要iOS 8.0以上版本才支持Health Kit
+    if(!_homeManager){
+        _homeManager = [[HMHomeManager alloc] init];
+        _homeManager.delegate = self;
     }
 }
 
@@ -688,9 +591,11 @@ return _sharedObject; \
 - (void)homeManagerDidUpdateHomes:(HMHomeManager *)manager{
     
     if(manager.homes.count > 0){
+        
         DebugLog(@"当前已有HMHome对象存在");
         DebugLog(@"已获取Home Kit权限");
     }else{
+        
         DebugLog(@"当前暂无HMHome对象");
         __weak HMHomeManager *weakHomeManager = manager;
         [manager addHomeWithName:@"我的家" completionHandler:^(HMHome * _Nullable home, NSError * _Nullable error) {
@@ -759,8 +664,14 @@ return _sharedObject; \
 - (void)checkMotionAuthorization{
     
     //由CoreMotion提供，需要iOS 7及更高版本，并且要求设备有协处理器（iPhone 5s及之后的设备都支持）
-    if(@available(iOS 7, *) && [CMMotionActivityManager isActivityAvailable]){
+    if(@available(iOS 7, *)){
  
+        if(![CMMotionActivityManager isActivityAvailable]){
+            
+            DebugLog(@"运动与健身无法使用");
+            return;
+        }
+        
         if(!_motionActivityManager){
             _motionActivityManager = [[CMMotionActivityManager alloc]init];
         }
@@ -784,9 +695,9 @@ return _sharedObject; \
             if(activity.confidence == CMMotionActivityConfidenceLow){
                 DebugLog(@"低");
              }else if(activity.confidence == CMMotionActivityConfidenceMedium){
-                 DebugLog(@"中");
+                DebugLog(@"中");
              }else if(activity.confidence == CMMotionActivityConfidenceHigh){
-                 DebugLog(@"高");
+                DebugLog(@"高");
              }
             
             [_motionActivityManager stopActivityUpdates];
