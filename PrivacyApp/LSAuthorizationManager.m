@@ -411,38 +411,43 @@ return _sharedObject; \
     //查询当前设备是否已打开定位服务
     if(![CLLocationManager locationServicesEnabled]){
         //定位服务不可用
+        //出现这个情况是手机设置中的“隐私-定位服务”被关闭了，这个开关一旦关掉所有app都无法获取到定位
         DebugLog(@"定位服务不可用");
     }else{
         
         //判断当前App定位权限状态
-        CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-        
-        if(status == kCLAuthorizationStatusNotDetermined){
-            
-            DebugLog(@"用户还未作出选择，主动弹框询问");
-            //当前用户还未选择，可以让App主动弹询问用户是否允许
-            if(!_locationManager){
-                _locationManager = [[CLLocationManager alloc] init];
-                _locationManager.delegate = self;
-            }
-            
-            //iOS 8.0+支持两种定位模式：
-            //(1) [locationManager requestWhenInUseAuthorization]; App使用过程中定位
-            //(2) [locationManager requestAlwaysAuthorization]; 持续定位，支持App进入后台后仍持续获取定位信息
-            [_locationManager requestWhenInUseAuthorization];
-//            [_locationManager requestAlwaysAuthorization];
-        }else{
-            
-            [self checkLocationManagerState:status];
-        }
+        [self checkLocationManagerState:[CLLocationManager authorizationStatus]];
     }
 }
 
+- (void)requestLocationAuthorization{
+    
+    if(!_locationManager){
+        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager.delegate = self;
+    }
+    
+    //iOS 8.0+支持两种定位模式：
+    //(1) [locationManager requestWhenInUseAuthorization]; App使用过程中定位
+    //(2) [locationManager requestAlwaysAuthorization]; 持续定位，支持App进入后台后仍持续获取定位信息
+    //注意！使用后台持续定位功能需要对应匹配的业务，否则审核会被拒绝，如果你的应用并非类似导航app，请选择前者
+    [_locationManager requestWhenInUseAuthorization];
+//    [_locationManager requestAlwaysAuthorization];
+}
+
 #pragma mark - CLLocationManagerDelegate
+//iOS 14之前
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
  
     //CLLocationManagerDelegate回调，CLAuthorizationStatus更新：
     [self checkLocationManagerState:status];
+}
+
+//iOS 14之后
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager{
+    if(@available(iOS 14, *)){
+        [self checkLocationManagerState:manager.authorizationStatus];
+    }
 }
 
 - (void)checkLocationManagerState:(CLAuthorizationStatus)status{
@@ -450,7 +455,9 @@ return _sharedObject; \
     switch (status) {
         case kCLAuthorizationStatusNotDetermined:
         {
-            
+            DebugLog(@"用户还未作出选择，主动弹框询问");
+            //当前用户还未选择，可以让App主动弹询问用户是否允许
+            [self requestLocationAuthorization];
         }
             break;
         case kCLAuthorizationStatusRestricted:
@@ -566,6 +573,7 @@ return _sharedObject; \
             case HKAuthorizationStatusSharingDenied://用户明确拒绝健康权限
             {
                 DebugLog(@"用户明确拒绝健康权限");
+                //可以向用户做一个友好的提示，引导其去“设置”中打开联系人权限
             }
                 break;
             case HKAuthorizationStatusSharingAuthorized://已获得健康权限
